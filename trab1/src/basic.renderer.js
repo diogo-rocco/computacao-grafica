@@ -99,6 +99,17 @@
         return true;
     }
 
+    function transpose(matrix){
+        var transposed_matrix = [[]];
+        for(var i = 0; i<matrix.length; i++)
+            for(var j=0; j<matrix[i].length; j++){
+                if(transposed_matrix.length<matrix[i].length) transposed_matrix[j] = []
+                transposed_matrix[j][i] = matrix[i][j]
+            }
+    
+        return transposed_matrix;
+    }
+
     function multiplyMatrices(matrix_1, matrix_2) {
         var result = [];
         for (var i = 0; i < matrix_1.length; i++) {
@@ -109,20 +120,26 @@
                     sum += matrix_1[i][k] * matrix_2[k][j];
                 }
                 result[i][j] = Math.round(sum);
+                //result[i][j] = sum;
             }
         }
-        return result;
+        console.log(matrix_1, matrix_2);
+        console.log(transpose(result));
+        return transpose(result);
     }
+
     
 
     function applyTransformation(primitive){
         var vertices = [];
+        var novos_vertices = [];
+        var transformation = primitive.xform;
+        
         for(var i=0; i<primitive.vertices.length; i++){
             vertices.push([primitive.vertices[i][0], primitive.vertices[i][1], 1]);
         }
-        var transformation = primitive.xform;
-
-        var novos_vertices = multiplyMatrices(vertices, transformation);
+        
+        novos_vertices = multiplyMatrices(transformation, transpose(vertices))
 
         for(var i=0; i<novos_vertices.length; i++){
             novos_vertices[i] = [novos_vertices[i][0], novos_vertices[i][1]];
