@@ -64,14 +64,10 @@
             if(i != vertices.length - 1) {
                 n[0] = - ( vertices[i + 1][1] - vertices[i][1] );
                 n[1] =  vertices[i + 1][0] - vertices[i][0];
-                //n[0] = vertices[i + 1][0] - vertices[i][0];
-                //n[1] = vertices[i + 1][1] - vertices[i][1];
             }
             else {
                 n[0] = - ( vertices[0][1] - vertices[i][1] );
                 n[1] =  vertices[0][0] - vertices[i][0];
-                //n[0] = vertices[0][0] - vertices[i][0];
-                //n[1] = vertices[0][1] - vertices[i][1];
             }
             
             var vector_to_point = [];
@@ -120,11 +116,8 @@
                     sum += matrix_1[i][k] * matrix_2[k][j];
                 }
                 result[i][j] = Math.round(sum);
-                //result[i][j] = sum;
             }
         }
-        console.log(matrix_1, matrix_2);
-        console.log(transpose(result));
         return transpose(result);
     }
 
@@ -207,14 +200,10 @@
                     // Loop through all pixels
                     // Use bounding boxes in order to speed up this loop
                     
-                    //if(primitive.shape == "circle") triangulate(primitive, 100);
-                    if(primitive.shape == "circle") triangulate(primitive, 30);
+                    if(primitive.shape == "circle") triangulate(primitive, 100);
                     if(primitive.hasOwnProperty("xform")) primitive.vertices = applyTransformation(primitive);
                     var bounding_box;
-                    //if(primitive.shape == "circle") bounding_box = getCircleBoundingBox(primitive);
-                    //else bounding_box = getBoundingBox(primitive);
 
-                    console.log(primitive);
                     bounding_box = getBoundingBox(primitive);
 
                     for (var i = bounding_box.min_x; i <= bounding_box.max_x; i++) {
@@ -223,7 +212,6 @@
                             var y = j + 0.5;
 
                             // First, we check if the pixel center is inside the primitive 
-                            //if ( inside( x, y, primitive ) ) {
                             if ( insideWindingNumber( x, y, primitive ) ) {
                                 // only solid colors for now
                                 color = nj.array(primitive.color);
