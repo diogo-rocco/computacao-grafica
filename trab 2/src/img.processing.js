@@ -9,6 +9,7 @@
     function ImageProcesser(img, kernel = null, xform = null, bhandler = 'icrop') {
         this.img = img.clone();
         this.transformed = img.clone();
+        this.transformed_xform = img.clone();
         this.width = img.shape[1];
         this.heigth = img.shape[0];
         this.kernel = kernel;
@@ -153,26 +154,45 @@
             return nj.array([[inv_11, inv_12, inv_13], [inv_21, inv_22, inv_23], [inv_31, inv_32, inv_33]])
         },
 
+        inverse_map: function(pos_i, pos_j, x, y){
+            var i_pos_before_transform = Math.floor(x);
+            var j_pos_before_transform = Math.floor(y);
+
+            var a = x-i_pos_before_transform;
+            var b = y-j_pos_before_transform;
+
+            for(var k=0; k<4; k++){
+                this.transformed_xform.selection.data[(pos_i)*this.width*4+(pos_j)*4+k] = (1-a)*(1-b)*this.transformed.selection.data[(i_pos_before_transform)*this.width*4+(j_pos_before_transform)*4+k]+
+                a*(1-b)*this.transformed.selection.data[(i_pos_before_transform+1)*this.width*4+(j_pos_before_transform)*4+k]+
+                a*b*this.transformed.selection.data[(i_pos_before_transform+1)*this.width*4+(j_pos_before_transform+1)*4+k]+
+                (1-a)*b*this.transformed.selection.data[(i_pos_before_transform)*this.width*4+(j_pos_before_transform+1)*4+k]
+            }
+        },
+
         apply_xform: function()  {
-            var space = [];
-            /*for(var i=0; i<this.heigth; i++){
-                space.push([]);
-                for(var j=0; i<this.width; j++){
-                    var x_position = i*this.xform[0*3+0]+j*this.xform[0*3+1]
-                    var y_position = i*this.xform[1*3+0]+j*this.xform[1*3+1]
+            var inverse = this.find_inverse()
+            var x_position;
+            var y_position;
+
+            for(var i=0; i<this.heigth; i++){
+                for(var j=0; j<this.width; j++){
+                    x_position = i*inverse.selection.data[0*3+0]+j*inverse.selection.data[0*3+1];
+                    y_position = i*inverse.selection.data[1*3+0]+j*inverse.selection.data[1*3+1];
+                    this.inverse_map(i, j, x_position, y_position);
                 }
-            }*/
-            console.log(nj.dot(this.xform, this.find_inverse()))
+            }
+
+            this.transformed = this.transformed_xform;
         },
 
         update: function() {
             // Method to process image and present results
             var start = new Date().valueOf();
-
+            
             if(this.kernel != null) {
                 this.apply_kernel(this.bhandler);
             }
-
+            
             if(this.xform != null) {
                 this.apply_xform();
             }
