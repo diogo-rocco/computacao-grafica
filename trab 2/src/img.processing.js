@@ -82,19 +82,9 @@
             if(border == 'icrop'){
                 for(var i=1; i<this.heigth-1; i++){
                     for(var j=1; j<this.width-1; j++){
-                        /*for(var k=0; k<3; k++){
+                        for(var k=0; k<3; k++){
                             this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
                             this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
-                            this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);*/
-                        for(var k=0; k<3; k++){
-                            this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (8*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i+1)*this.width*4+(j-1)*4+k]-
-                            this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k]-
-                            this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]-
-                            this.img.selection.data[(i-1)*this.width*4+(j+1)*4+k]-
                             this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
                             this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
                             this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
@@ -137,9 +127,42 @@
             else if(this.kernel == "sobel") this.sobel_filter(border);
         },
 
+        find_inverse: function(){
+            var a_11 = this.xform.selection.data[0*3+0]
+            var a_12 = this.xform.selection.data[0*3+1]
+            var a_13 = this.xform.selection.data[0*3+2]
+            var a_21 = this.xform.selection.data[1*3+0]
+            var a_22 = this.xform.selection.data[1*3+1]
+            var a_23 = this.xform.selection.data[1*3+2]
+            var a_31 = this.xform.selection.data[2*3+0]
+            var a_32 = this.xform.selection.data[2*3+1]
+            var a_33 = this.xform.selection.data[2*3+2]
+            
+            var det = a_11*a_22*a_33+a_21*a_32*a_13+a_31*a_12*a_23-(a_13*a_22*a_31+a_23*a_32*a_11+a_33*+a_12*a_21)
+
+            var inv_11 = (a_22*a_33-a_23*a_32)/det
+            var inv_21 = (-a_21*a_33+a_23*a_31)/det
+            var inv_31 = (a_21*a_32-a_22*a_31)/det
+            var inv_12 = (-a_12*a_33+a_13*a_32)/det
+            var inv_22 = (a_11*a_33-a_13*a_31)/det
+            var inv_32 = (-a_11*a_32+a_12*a_31)/det
+            var inv_13 = (a_12*a_23-a_13*a_22)/det
+            var inv_23 = (-a_11*a_23+a_13*a_21)/det
+            var inv_33 = (a_11*a_22-a_12*a_21)/det
+
+            return nj.array([[inv_11, inv_12, inv_13], [inv_21, inv_22, inv_23], [inv_31, inv_32, inv_33]])
+        },
+
         apply_xform: function()  {
-            // Method to apply affine transform through inverse mapping (incomplete)
-            // You may create auxiliary functions/methods if you'd like
+            var space = [];
+            /*for(var i=0; i<this.heigth; i++){
+                space.push([]);
+                for(var j=0; i<this.width; j++){
+                    var x_position = i*this.xform[0*3+0]+j*this.xform[0*3+1]
+                    var y_position = i*this.xform[1*3+0]+j*this.xform[1*3+1]
+                }
+            }*/
+            console.log(nj.dot(this.xform, this.find_inverse()))
         },
 
         update: function() {
