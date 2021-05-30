@@ -141,7 +141,6 @@ Object.assign( WaveAnimation.prototype, {
             })
             
     
-        
         //  upperArmTween.chain( ... ); this allows other related Tween animations occur at the same time
         upperArmTween.chain(lowerArmTween.chain(inverseArmTween)).start();       
     },
@@ -154,7 +153,3 @@ Object.assign( WaveAnimation.prototype, {
         this.animate(0);
     }
 });
-
-
-
-
