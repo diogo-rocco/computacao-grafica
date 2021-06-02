@@ -19,36 +19,22 @@
 
     Object.assign( ImageProcesser.prototype, {
 
-        box_filter: function(border){
-            if(border == 'icrop'){
-                for(var i=1; i<this.heigth-1; i++){
-                    for(var j=1; j<this.width-1; j++){
-                        for(var k=0; k<4; k++){
-                            var sum = 0;
-                            for(var i2 = -1; i2<2; i2++)
-                                for(var j2 = -1; j2<2; j2++)
-                                    sum += this.img.selection.data[(i-i2)*this.width*4+(j-j2)*4+k];
-                            
-                            this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = sum/9
-                        }
+        box_filter: function(border){ 
+            for(var i=1; i<this.heigth-1; i++){
+                for(var j=1; j<this.width-1; j++){
+                    for(var k=0; k<4; k++){
+                        var sum = 0;
+                        for(var i2 = -1; i2<2; i2++)
+                            for(var j2 = -1; j2<2; j2++)
+                                sum += this.img.selection.data[(i-i2)*this.width*4+(j-j2)*4+k];
+                        
+                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = sum/9
+
                     }
                 }
             }
 
             if(border == 'extend'){
-                for(var i=1; i<this.heigth-1; i++){
-                    for(var j=1; j<this.width-1; j++){
-                        for(var k=0; k<4; k++){
-                            var sum = 0;
-                            for(var i2 = -1; i2<2; i2++)
-                                for(var j2 = -1; j2<2; j2++)
-                                    sum += this.img.selection.data[(i-i2)*this.width*4+(j-j2)*4+k];
-                            
-                            this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = sum/9
-                        }
-                    }
-                }
-
                 for(var i=0; i<this.heigth; i += this.heigth-1){
                     for(var j=0; j<this.width; j += this.width-1){
                         for(var k=0; k<4; k++){
@@ -81,16 +67,69 @@
         laplace_filter: function(border){
             var I = 1;
             console.log(border);
-            if(border == 'icrop'){
-                console.log("rodando laplace");
-                for(var i=1; i<this.heigth-1; i++){
-                    for(var j=1; j<this.width-1; j++){
-                        for(var k=0; k<3; k++){
-                            this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
-                            this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
-                            this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+
+            for(var i=1; i<this.heigth-1; i++){
+                for(var j=1; j<this.width-1; j++){
+                    for(var k=0; k<3; k++){
+                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                        this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                        this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                        this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                        this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+                    }
+                }
+            }
+
+            if(border == 'extend'){
+                for(var i=0; i<this.heigth; i += this.heigth-1){
+                    for(var j=0; j<this.width; j += this.width-1){
+                        for(var k=0; k<4; k++){
+                            var sum = 0;
+                            for(var i2 = -1; i2<2; i2++){
+                                for(var j2 = -1; j2<2; j2++){
+                                    if(i==0 && j==0)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k])*(I/4);
+                                    
+                                    else if(i==0)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+
+                                    else if(j==0)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k])*(I/4);
+                                    
+                                    else if(i==this.heigth-1 && j==this.width-1)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+
+                                    else if(i==this.heigth-1)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+
+                                    else if(j==this.width-1)
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = (4*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                        this.img.selection.data[(i)*this.width*4+(j-1)*4+k])*(I/4);
+                                }
+                            }
                         }
                     }
                 }
@@ -99,7 +138,6 @@
         },
 
         sobel_filter: function(border){
-            if(border == 'icrop'){
                 for(var i=1; i<this.heigth-1; i++){
                     for(var j=1; j<this.width-1; j++){
                         for(var k=0; k<3; k++){
@@ -121,7 +159,118 @@
                         }
                     }
                 }
-            }
+
+                if(border == 'extend'){
+                    for(var i=0; i<this.heigth; i += this.heigth-1){
+                        for(var j=0; j<this.width; j += this.width-1){
+                            for(var k=0; k<4; k++){
+                                var sum = 0;
+                                for(var i2 = -1; i2<2; i2++){
+                                    for(var j2 = -1; j2<2; j2++){
+                                        if(i==0 && j==0){
+                                            var sx = (-1*this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                2*this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+                                        }
+
+                                        else if(i==0){
+                                            var sx = (-1*this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j-1)*4+k]-
+                                                2*this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+                                        }
+
+                                        else if(j==0){
+                                            var sx = (-1*this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j+1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                2*this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                2*this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j+1)*4+k])/8;
+                                        }
+                                        
+                                        else if(i==this.heigth-1 && j==this.width-1){
+                                            var sx = (-1*this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j-1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j)*4+k])/8;
+                                        }
+
+                                        else if(i==this.heigth-1){
+                                            var sx = (-1*this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j+1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j+1)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j-1)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i)*this.width*4+(j+1)*4+k])/8;
+                                        }
+
+                                        else if(j==this.width-1){
+                                            var sx = (-1*this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                                2*this.img.selection.data[(i)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j-1)*4+k]+
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k])/8;
+
+                                            var sy = (this.img.selection.data[(i-1)*this.width*4+(j-1)*4+k]+
+                                                2*this.img.selection.data[(i-1)*this.width*4+(j)*4+k]+
+                                                this.img.selection.data[(i-1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j-1)*4+k]-
+                                                2*this.img.selection.data[(i+1)*this.width*4+(j)*4+k]-
+                                                this.img.selection.data[(i+1)*this.width*4+(j)*4+k])/8;
+                                        }
+
+                                        this.transformed.selection.data[(i)*this.width*4+(j)*4+k] = Math.sqrt(sx*sx + sy*sy)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
         },
 
         apply_kernel: function(border = 'icrop') {
