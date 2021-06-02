@@ -200,15 +200,14 @@
             }
 
             // Loading HTML elements and saving
-            /*
             var $transformed = document.getElementById('transformed');
-            $transformed.width = this.width; $transformed.height = this.height;
-            nj.images.save(transformed, $transformed);
+            $transformed.width = this.width; 
+            $transformed.height = this.heigth;
+            nj.images.save(this.transformed, $transformed);
             var duration = new Date().valueOf() - start;
             document.getElementById('duration').textContent = '' + duration;
-            */
 
-            return this.transformed;
+            //return this.transformed;
         }
 
     } )
