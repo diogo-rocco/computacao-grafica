@@ -79,8 +79,10 @@
         },
 
         laplace_filter: function(border){
-            var I = 1/2;
+            var I = 1;
+            console.log(border);
             if(border == 'icrop'){
+                console.log("rodando laplace");
                 for(var i=1; i<this.heigth-1; i++){
                     for(var j=1; j<this.width-1; j++){
                         for(var k=0; k<3; k++){
@@ -124,7 +126,7 @@
 
         apply_kernel: function(border = 'icrop') {
             if(this.kernel == "box") this.box_filter(border);
-            else if(this.kernel == "laplace") { this.laplace_filter(border);}
+            else if(this.kernel == "laplace") this.laplace_filter(border)
             else if(this.kernel == "sobel") this.sobel_filter(border);
         },
 
